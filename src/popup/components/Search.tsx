@@ -8,6 +8,7 @@ const Search = () => {
       ticker: string
     }[]
   >()
+  const [hightLightIndex, setHightLightIndex] = useState<number>(0)
   const urlSearchParam = new URLSearchParams()
 
   const fetchStockLabel = async (value: string) => {
@@ -31,14 +32,19 @@ const Search = () => {
       return
     }
     const fetchedLabels: string[] = await fetchStockLabel(value)
-    const searchedResults = fetchedLabels.map((fetchedLabel) => {
-      const ticker = fetchedLabel.slice(0, 4)
-      return {
-        label: fetchedLabel,
-        href: `https://kabutan.jp/stock/?code=${ticker}`,
-        ticker
-      }
-    })
+    const searchedResults = fetchedLabels
+      .filter((fetchLabel) => {
+        const ticker = fetchLabel.slice(0, 4)
+        return /^\d{4}$/.test(ticker) // 4桁の数値（証券コード）であるか判定
+      })
+      .map((fetchedLabel) => {
+        const ticker = fetchedLabel.slice(0, 4)
+        return {
+          label: fetchedLabel,
+          href: `https://kabutan.jp/stock/?code=${ticker}`,
+          ticker
+        }
+      })
     setLabelList(searchedResults)
   }
   return (
