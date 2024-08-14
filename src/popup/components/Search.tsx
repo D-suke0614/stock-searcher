@@ -8,7 +8,10 @@ const Search = () => {
     }[]
   >()
   const [selectedLabel, setSelectedLabel] = useState<string>("")
-  const [selectedStockInfo, setSelectedStockInfo] = useState({})
+  const [selectedStockInfo, setSelectedStockInfo] = useState<{
+    regularPrice?: number
+    dividends?: { amount?: number }[]
+  }>({})
   const urlSearchParam = new URLSearchParams()
 
   const fetchStockLabel = async (value: string) => {
@@ -62,14 +65,14 @@ const Search = () => {
     const res = await fetch(url)
     const body = await res.json()
     const result = body.chart.result[0]
-    console.log(result)
-    const dividends = Object.entries(result.events.dividends)
-    const data = {
-      dividends: [dividends[0][1], dividends[1][1]],
+    const displayInfo = {
       regularPrice: result.meta.regularMarketPrice
     }
-    console.log(data)
-    setSelectedStockInfo(data)
+    if (result.events) {
+      const dividends = Object.entries(result.events.dividends)
+      displayInfo["dividends"] = [dividends[0][1], dividends[1][1]]
+    }
+    setSelectedStockInfo(displayInfo)
   }
   return (
     <>
