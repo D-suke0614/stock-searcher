@@ -10,7 +10,7 @@ const Search = () => {
   const [selectedLabel, setSelectedLabel] = useState<string>("")
   const [selectedStockInfo, setSelectedStockInfo] = useState<{
     regularPrice?: number
-    dividends?: { amount?: number }[]
+    dividends?: { amount?: number; date?: string }[]
   }>({})
   const urlSearchParam = new URLSearchParams()
 
@@ -51,6 +51,13 @@ const Search = () => {
     setLabelList(searchedResults)
   }
 
+  const calcMonth = (date: Date) => {
+    date.setMonth(date.getMonth() + 3)
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
+    return `${year}/${month}`
+  }
+
   const handleLabelClick = async (
     e: React.MouseEvent<HTMLButtonElement>,
     ticker: string
@@ -70,7 +77,16 @@ const Search = () => {
     }
     if (result.events) {
       const dividends = Object.entries(result.events.dividends)
-      displayInfo["dividends"] = [dividends[0][1], dividends[1][1]]
+      displayInfo["dividends"] = [
+        {
+          amount: dividends[0][1]["amount"],
+          date: calcMonth(new Date(dividends[0][1]["date"] * 1000))
+        },
+        {
+          amount: dividends[1][1]["amount"],
+          date: calcMonth(new Date(dividends[1][1]["date"] * 1000))
+        }
+      ]
     }
     setSelectedStockInfo(displayInfo)
   }
@@ -101,19 +117,19 @@ const Search = () => {
               <dl>
                 <div className="flex">
                   <dt>株価</dt>
-                  <dd>{selectedStockInfo.regularPrice}</dd>
+                  <dd>¥{selectedStockInfo.regularPrice}</dd>
                 </div>
                 {/* 配当情報があるときだけ表示 */}
                 {selectedStockInfo.dividends ? (
                   <>
                     <div className="flex">
                       {/* 一年前の配当 */}
-                      <dt>配当（2024/03/01）</dt>
+                      <dt>配当（{selectedStockInfo.dividends[0].date}）</dt>
                       <dd>¥{selectedStockInfo.dividends[0].amount}</dd>
                     </div>
                     <div className="flex">
                       {/* 直近の配当 */}
-                      <dt>配当（2024/09/01）</dt>
+                      <dt>配当（{selectedStockInfo.dividends[1].date}）</dt>
                       <dd>¥{selectedStockInfo.dividends[1].amount}</dd>
                     </div>
                     <div className="flex">
