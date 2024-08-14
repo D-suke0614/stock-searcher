@@ -1,4 +1,4 @@
-import { useState, type MouseEvent } from "react"
+import { useState } from "react"
 
 const Search = () => {
   const [labelList, setLabelList] = useState<
@@ -103,24 +103,31 @@ const Search = () => {
                   <dt>株価</dt>
                   <dd>{selectedStockInfo.regularPrice}</dd>
                 </div>
-                <div className="flex">
-                  {/* 一年前の配当 */}
-                  <dt>配当（2024/03/01）</dt>
-                  <dd>¥{selectedStockInfo.dividends[0].amount}</dd>
-                </div>
-                <div className="flex">
-                  {/* 直近の配当 */}
-                  <dt>配当（2024/09/01）</dt>
-                  <dd>¥{selectedStockInfo.dividends[1].amount}</dd>
-                </div>
-                <div className="flex">
-                  <dt>配当（合計）</dt>
-                  <dd>
-                    ¥
-                    {selectedStockInfo.dividends[0].amount +
-                      selectedStockInfo.dividends[1].amount}
-                  </dd>
-                </div>
+                {/* 配当情報があるときだけ表示 */}
+                {selectedStockInfo.dividends ? (
+                  <>
+                    <div className="flex">
+                      {/* 一年前の配当 */}
+                      <dt>配当（2024/03/01）</dt>
+                      <dd>¥{selectedStockInfo.dividends[0].amount}</dd>
+                    </div>
+                    <div className="flex">
+                      {/* 直近の配当 */}
+                      <dt>配当（2024/09/01）</dt>
+                      <dd>¥{selectedStockInfo.dividends[1].amount}</dd>
+                    </div>
+                    <div className="flex">
+                      <dt>配当（合計）</dt>
+                      <dd>
+                        ¥
+                        {selectedStockInfo.dividends[0].amount +
+                          selectedStockInfo.dividends[1].amount}
+                      </dd>
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
               </dl>
             </div>
           ) : (
